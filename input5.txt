@@ -1,0 +1,6 @@
+KB
+~r|u
+~u|~w
+r|~w
+ENDKB
+~w
