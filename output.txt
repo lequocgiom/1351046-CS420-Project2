@@ -1,1 +1,5 @@
-~r|u,~u,r~r,r
+~w
+~r|u,~u|~w,r|~w,w
+~r|u,~u,r
+~r,r
+True
