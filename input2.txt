@@ -6,4 +6,4 @@ KB
 ~k|~m
 r
 ENDKB
-~m|~k
+~m

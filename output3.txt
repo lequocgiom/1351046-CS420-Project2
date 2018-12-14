@@ -1,0 +1,3 @@
+~m|~k
+~p|q,~q|r,~p|~r|s,~r|k,~k|~m,r,m|k
+True

@@ -1,0 +1,4 @@
+~m|~k|r
+~p|q,~q|r,k|~m,~p|~r|s,~r|k|m,~k|~m,r,m|k|~r
+~p|q,~q|r,k|~m,~p|s,k|m,~k|~m,m|k
+True

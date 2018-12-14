@@ -1,0 +1,7 @@
+~m
+~p|q,~q|r,~p|~r|s,~r|k,~k|~m,i,m
+~p|q,~q|r,~p|~r|s,~r|k,~k,i
+~p|q,~q|r,~p|~r|s,~r,i
+~p|q,~q,~p|~r|s,i
+~p,~p|~r|s,i
+False

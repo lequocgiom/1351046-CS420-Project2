@@ -1,10 +1,9 @@
 KB
 ~p|q
 ~q|r
-k|~m
 ~p|~r|s
 ~r|k
 ~k|~m
-r|~k
+r
 ENDKB
-~m|~k|r
+~m|~k

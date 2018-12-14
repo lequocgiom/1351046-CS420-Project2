@@ -2,42 +2,43 @@ import sys
 import os
 
 args = sys.argv[1:]
-#
-# orig_stdout = sys.stdout
-# f = open('out.txt', 'w')
-# sys.stdout = f
-#
-# for i in range(2):
-#     print 'i = ', i
-#
-# sys.stdout = orig_stdout
-# f.close()
+
 def IsUnitClause(x):
+    '''
+    check whether the predicate is unit clause
+    :param x:
+    :return: True if x is unit clause
+    '''
     if len(x) == 1 and x[0][0] != '~':
         return True
 
 def IsNegate(x):
+    '''
+    check whether the predicate is negate unit clause
+    :param x:
+    :return: True if x is negate unit clause
+    '''
     if len(x) == 1 and x[0][0] == '~':
         return True
 
 def resolve(x,y):
+    '''
+    check whether the 2 predicates can be resolved
+    :param x:
+    :param y:
+    :return:
+    '''
     if x == '~' + y or y == '~' + x:
         return True
     return False
 
-# def hasEmptyClause(final_KB):
-#     for i in range(0, len(final_KB)):
-#         for j in range(0,len(final_KB)):
-#             if len(final_KB[i]) == len(final_KB[j]) == 1:
-#                 if j!=i:
-#                     if resolve(final_KB[i][0],final_KB[j][0]) == True:
-#                         return True
-#         # if len(final_KB[i]) == 0:
-#         #     # f.close()
-#         #     return True
-#     return False
 
 def NegateConclusion(x):
+    '''
+    Negate the prove sentence to add to the KB
+    :param x:
+    :return:
+    '''
     for i in range(0, len(x)):
         if x[i][0] == '~':
             x[i] = x[i][1]
@@ -45,6 +46,11 @@ def NegateConclusion(x):
             x[i] = '~' + x[i][0]
 
 def ResolveMultiple(KB):
+    '''
+    Check whether there exists a pair of resolution creating empty clause
+    :param KB:
+    :return:
+    '''
     for i in range (0,len(KB)):
         for j in range (0,len(KB)):
             count = 0
@@ -62,8 +68,22 @@ def ResolveMultiple(KB):
                         # f.close()
                         return True
     return False
+def HasResolvePair(KB):
+    for i in range (0,len(KB)):
+        for j in range (0,len(KB)):
+            if j!=i:
+                for m in range(0,len(KB[i])):
+                    for n in range(0,len(KB[j])):
+                        if resolve(KB[i][m],KB[j][n]):
+                            return True
+    return False
 
 def process_data(path):
+    '''
+    process the data from input file to create KB
+    :param path: the path of input file
+    :return: the final Knowledge Base
+    '''
     data = []
     KB = []
     with open(path,'r') as f:
@@ -91,6 +111,11 @@ def process_data(path):
     return final_KB
 
 def print_KB(KB):
+    '''
+    Print the KB in the right format
+    :param KB:
+    :return:
+    '''
     copy = KB.copy()
     temp = []
     for i in range(0, len(copy)):
@@ -100,26 +125,26 @@ def print_KB(KB):
     print(temp)
 
 
-# final_KB[5].remove(final_KB[5][0])
-# print(final_KB)
-
-# print(len(final_KB[6]), final_KB[6][0][0], final_KB[6][0][1])
-# print(IsNegate(final_KB[6]))
-# print(final_KB[4], len(final_KB[4]))
-
-
 def resolution(final_KB):
-    #firstly, if there exist a pair of resolution sentences with 2 or more predicates
+    '''
+    The main resolution algorithm, first resolve the negate unit clause then resolve the unit clause
+    :param final_KB:
+    :return:
+    '''
+    #firstly, if there exists a pair of resolution sentences with 2 or more predicates
     # if ResolveMultiple(final_KB) == True:
     #     return True
-    #if there exist negate unit clause in KB
 
+    #if there exists negate unit clause in KB, the check = true if there exists, false if not
+    check = False
     for i in range(0,len(final_KB)):
         if len(final_KB)>2:
             if IsNegate(final_KB[i]):
+
                 for j in range(0,len(final_KB)):
                     for k in range(0,len(final_KB[j])):
                         if resolve(final_KB[i][0],final_KB[j][k]):
+                            check = True
                             final_KB[j].remove(final_KB[j][k])
                             # if final_KB[j] == None:
                             #     final_KB[j][0]== '...'
@@ -127,40 +152,50 @@ def resolution(final_KB):
                 # if(final_KB != original_KB):
                 #     original_KB = final_KB
                 #     break
-                final_KB.remove(final_KB[i])
-                print_KB(final_KB)
+                if check == True:
+                    final_KB.remove(final_KB[i])
+                    print_KB(final_KB)
                 # print("Step " + str(step), final_KB)
 
-                break
+                    break
     # if there isn't any negate clause in KB, check whether there exist unit clause in KB
-    for i in range(0,len(final_KB)):
-        if len(final_KB) > 2:
-            if IsUnitClause(final_KB[i]):
-                for j in range(0,len(final_KB)):
-                    for k in range(0,len(final_KB[j])):
-                        if resolve(final_KB[i][0],final_KB[j][k]):
-                            final_KB[j].remove(final_KB[j][k])
-                            # if final_KB[j] == None:
-                            #     final_KB[j][0]== '...'
-                            break
-                # if(final_KB != original_KB):
-                #     original_KB = final_KB
-                #     break
-                final_KB.remove(final_KB[i])
-                print_KB(final_KB)
-                # print("Step " + str(step), final_KB)
+    # check = False means there isn't any negate unit clause, then check the unit clause
+    # if check = True, then it means there is negate unit clause and we exit the function to loop again
+    if check == False:
+        for i in range(0,len(final_KB)):
+            if len(final_KB) > 2:
+                if IsUnitClause(final_KB[i]):
+                    check = False
+                    for j in range(0,len(final_KB)):
+                        for k in range(0,len(final_KB[j])):
+                            if resolve(final_KB[i][0],final_KB[j][k]):
+                                check = True
+                                final_KB[j].remove(final_KB[j][k])
+                                # if final_KB[j] == None:
+                                #     final_KB[j][0]== '...'
+                                break
+                    # if(final_KB != original_KB):
+                    #     original_KB = final_KB
+                    #     break
+                    if check == True:
+                        final_KB.remove(final_KB[i])
+                        print_KB(final_KB)
+                    # print("Step " + str(step), final_KB)
 
-                break
+                        break
 
 if __name__ == "__main__":
 
     # path = input("Enter the name of your input file: ")
+    # the 3 below lines aim to use the print to write to the output file
     orig_stdout = sys.stdout
     f = open(args[1], 'w')
     sys.stdout = f
     final_KB = process_data(args[0])
+    # final_KB = process_data("input6.txt")
 
-    while(not ResolveMultiple(final_KB) and len(final_KB)>2):
+    # Loop the resolution until find a pair of resolve predicates
+    while(not ResolveMultiple(final_KB) and len(final_KB)>2 and HasResolvePair(final_KB)):
         resolution(final_KB)
     if ResolveMultiple(final_KB) == True:
         print("True")
@@ -169,12 +204,3 @@ if __name__ == "__main__":
 
     sys.stdout = orig_stdout
     f.close()
-
-
-# print(final_KB[4], len(final_KB[4]), IsNegate(final_KB[4]))
-# print(final_KB)
-
-# x = '~m'
-# y = 'm'
-# if resolve(x,y):
-#     print("True")
